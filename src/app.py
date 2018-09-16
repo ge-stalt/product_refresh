@@ -25,7 +25,6 @@ def homepage():
         <link rel="stylesheet" href="http://stash.compjour.org/assets/css/foundation.css">
     </head>
     <body style="width: 880px; margin: auto;">  
-        {db_url}
         <h1>Visible stuff goes here</h1>
         <p>here's a paragraph, fwiw</p>
         <p>And here's an image:</p>
