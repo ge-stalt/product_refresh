@@ -70,11 +70,6 @@ def place(place):
 def weather(weather):
     return("I don't know what the weather is in {name}".format(name=weather))
 
-@app.route('/what')
-def homepage():
-    return "Whatever", 404
-
-
 if (__name__ == '__main__'):
     print("starting app")
     app.run(debug=True, use_reloader=True)
