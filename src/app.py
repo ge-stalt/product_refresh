@@ -1,8 +1,12 @@
+import os
+import requests
 from flask import Flask
 from string import Template
-import requests
 
 app = Flask(__name__)
+app.config.from_object(os.environ['APP_SETTINGS'])
+print(os.environ['APP_SETTINGS'])
+
 print("started application with app name: ", __name__)
 
 HTML_TEMPLATE = Template("""
@@ -18,10 +22,11 @@ def homepage():
     return """
     <!DOCTYPE html>
     <head>
-        <title>My title</title>
+        <title>Product Refresh</title>
         <link rel="stylesheet" href="http://stash.compjour.org/assets/css/foundation.css">
     </head>
     <body style="width: 880px; margin: auto;">  
+        {db_url}
         <h1>Visible stuff goes here</h1>
         <p>here's a paragraph, fwiw</p>
         <p>And here's an image:</p>
@@ -43,24 +48,9 @@ def homepage():
             </p>
 
         </p>
+        ENVIRONMENT:{env}
     </body>
-    """
-
-@app.route('/videos/<vid>')
-def videos(vid):
-    youtube_url = 'https://www.youtube.com/watch?v={video_id}'.format(video_id=id)
-    vidtemplate = Template("""
-      <h2>
-        YouTube video link: 
-        <a href="https://www.youtube.com/watch?v=${youtube_id}">
-          ${youtube_id}
-        </a>
-      </h2>
-    
-      <iframe src="https://www.youtube.com/embed/${youtube_id}" width="853" height="480" frameborder="0" allowfullscreen></iframe>
-    """)
-    return vidtemplate.substitute(youtube_id=vid)
-
+    """.format(env=os.environ['BUILD_ENV'])
 
 @app.route('/places/<place>')
 def place(place):
@@ -72,5 +62,5 @@ def weather(weather):
 
 if (__name__ == '__main__'):
     print("starting app")
-    app.run(debug=True, use_reloader=True)
+    app.run()
     print("app started")
