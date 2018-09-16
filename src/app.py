@@ -1,12 +1,11 @@
 import os
 import requests
+# import config
 from flask import Flask
 from string import Template
 
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
-print(os.environ['APP_SETTINGS'])
-
+app.config.from_pyfile('config.py')
 print("started application with app name: ", __name__)
 
 HTML_TEMPLATE = Template("""
