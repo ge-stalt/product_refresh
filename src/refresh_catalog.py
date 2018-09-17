@@ -14,6 +14,7 @@ def refresh_catalog(catalogId, token):
 
     db = get_db()
 
+    #get catalog
     catalog = get_catalog_by_id(db, catalogId)
 
     #update status
@@ -24,9 +25,9 @@ def refresh_catalog(catalogId, token):
 
     #enable new projdcts
     enable_new_products(db, catalog, CURRENT_VERSION)
-    
+
     #update status
-    update_catalog(catalogId, "Completed")
+    update_catalog(catalog, "Completed")
 
 
 

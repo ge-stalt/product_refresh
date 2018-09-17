@@ -26,11 +26,11 @@ def get_catalog_by_id(db, catalogId):
     productCatalogsCollection = db['productCatalogs']
     return productCatalogsCollection.find_one({"hgId": catalogId})
 
-def update_catalog(catalogId, status):
+def update_catalog(catalog, status):
     db = get_db()
     productCatalogsCollection = db['productCatalogs']
     productCatalogsCollection.update({
-        "hgId": catalogId
+        "hgId": catalog["hgId"]
     }, {
         "$set": {
             "Status": status,
