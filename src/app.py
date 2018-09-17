@@ -35,12 +35,16 @@ def create_dyno(dynoCommand):
             "force_no_tty": None
         }
     }
+    params = {
+        auth: ":{token}".format(token=os.environ['HEROKU_API_KEY'])
+    }
     headers = {
         'Accept': 'application/vnd.heroku+json; version=3',
         'Content-type': 'application/json',
-        'auth': ":" + os.environ['HEROKU_API_KEY']
+        'auth': ":" + os.environ['HEROKU_API_KEY'],
+        "Range": 'id ..; max=1000'
     }
-    response = requests.post(url, json=data, headers=headers)
+    response = requests.post(url, params=params, json=data, headers=headers)
     print(response.status_code)
     print(response.json())
 
