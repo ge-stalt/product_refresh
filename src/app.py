@@ -41,10 +41,10 @@ def homepage():
     </body>
     """.format(env=os.environ['BUILD_ENV'])
 
-def start_refresh(catalog):
+def start_refresh(catalog, token):
     if (os.environ['BUILD_ENV'] == "development"):
         # refresh run script locally
-        os.system("python3 refresh_catalog.py --catalogId {catalogId} --catalogUrl {catalogUrl}".format(catalogId=catalog["hgId"], catalogUrl=catalog["CatalogCSVUrl"]))
+        os.system("python3 src/refresh_catalog.py --token {token} --catalogId {catalogId} --catalogUrl {catalogUrl}".format(token=token, catalogId=catalog["hgId"], catalogUrl=catalog["CatalogCSVUrl"]))
         print("process_catalog: {}", catalog["hgId"])
     else:
         # refresh catalog <create a new dyno here>
@@ -53,9 +53,9 @@ def start_refresh(catalog):
 
 @app.route('/refresh/<token>')
 def refresh_product(token="123"):
-    catalogs = dbutil.get_catalogs()
+    catalogs = get_catalogs()
     for catalog in catalogs:
-        start_refresh(catalog)
+        start_refresh(catalog, token)
     
     return "Product refresh started"
 
