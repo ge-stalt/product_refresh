@@ -26,14 +26,11 @@ def create_dyno(dynoCommand):
     print("creating new dyno")
     url = "https://api.heroku.com/apps/grs-product-refresh/dynos"
     data = {
-        "body": {
-            
-            "command": dynoCommand,
-            "attach": False,
-            "size": "Performance-M",
-            "type": "run",
-            "force_no_tty": None
-        }
+        "command": dynoCommand,
+        "attach": False,
+        "size": "Performance-M",
+        "type": "run",
+        "force_no_tty": None
     }
     headers = {
         'Accept': 'application/vnd.heroku+json; version=3',
