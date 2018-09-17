@@ -9,6 +9,8 @@ name = "pypi"
 flask = "*"
 requests = "*"
 gunicorn = "*"
+pymongo = {version = "*", extras = ["tls", "snappy", "srv", "gssapi"]}
+"heroku3" = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"

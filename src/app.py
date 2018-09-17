@@ -1,20 +1,11 @@
 import os
-import requests
-# import config
+import sys
 from flask import Flask
-from string import Template
+import dbutil
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 print("started application with app name: ", __name__)
-
-HTML_TEMPLATE = Template("""
-<h1>Hello ${place_name}!</h1>
-
-<img src="https://maps.googleapis.com/maps/api/staticmap?size=700x300&markers=${place_name}" alt="map of ${place_name}">
-
-<img src="https://maps.googleapis.com/maps/api/streetview?size=700x300&location=${place_name}" alt="street view of ${place_name}">
-""")
 
 @app.route('/')
 def homepage():
@@ -50,15 +41,23 @@ def homepage():
     </body>
     """.format(env=os.environ['BUILD_ENV'])
 
-@app.route('/places/<place>')
-def place(place):
-    return(HTML_TEMPLATE.substitute(place_name=place))
+def start_refresh(catalog):
+    if (os.environ['BUILD_ENV'] == "development"):
+        # refresh run script locally
+        os.system("python3 refresh_catalog.py --catalogId {catalogId} --catalogUrl {catalogUrl}".format(catalogId=catalog["hgId"], catalogUrl=catalog["CatalogCSVUrl"]))
+        print("process_catalog: {}", catalog["hgId"])
+    else:
+        # refresh catalog <create a new dyno here>
+        print("create new dyno")
+    
 
-@app.route('/weather/<weather>')
-def weather(weather):
-    return("I don't know what the weather is in {name}".format(name=weather))
+@app.route('/refresh/<token>')
+def refresh_product(token="123"):
+    catalogs = dbutil.get_catalogs()
+    for catalog in catalogs:
+        start_refresh(catalog)
+    
+    return "Product refresh started"
 
 if (__name__ == '__main__'):
-    print("starting app")
     app.run()
-    print("app started")
