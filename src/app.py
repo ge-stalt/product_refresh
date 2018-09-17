@@ -36,7 +36,7 @@ def create_dyno(dynoCommand):
         }
     }
     params = {
-        auth: ":{token}".format(token=os.environ['HEROKU_API_KEY'])
+        "auth": ":{token}".format(token=os.environ['HEROKU_API_KEY'])
     }
     headers = {
         'Accept': 'application/vnd.heroku+json; version=3',
