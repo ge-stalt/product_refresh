@@ -20,7 +20,7 @@ def get_catalog_count():
 def get_catalogs():
     db = get_db()
     productCatalogsCollection = db['productCatalogs']
-    return productCatalogsCollection.find({})
+    return productCatalogsCollection.find({}).limit(3)
 
 def update_catalog(catalogId, status):
     db = get_db()
