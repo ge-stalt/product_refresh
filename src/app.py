@@ -24,7 +24,7 @@ def homepage():
 
 def create_dyno(dynoCommand):
     print("creating new dyno")
-    url = "https://api.heroku.com/apps/grs_product_refresh/dynos"
+    url = "https://api.heroku.com/apps/grs-product-refresh/dynos"
     data = {
         "body": {
             
@@ -41,7 +41,7 @@ def create_dyno(dynoCommand):
         'token': os.environ['HEROKU_API_KEY']
     }
     r = requests.post(url, json=data, headers=headers)
-    print(r.status_code)
+    print(r)
 
 def start_refresh(catalog, token):
     APP_NAME = os.environ['APP_NAME']
