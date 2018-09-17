@@ -1,9 +1,7 @@
 import os
-import sys
 import requests
 from flask import Flask
 from src.dbutil import get_catalogs
-import heroku3
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -39,8 +37,6 @@ def create_dyno(dynoCommand):
         "Range": 'id ..; max=1000'
     }
     response = requests.post(url, json=data, headers=headers)
-    print(response.status_code)
-    print(response.json())
 
 def start_refresh(catalog, token):
     APP_NAME = os.environ['APP_NAME']
@@ -49,12 +45,8 @@ def start_refresh(catalog, token):
     if (os.environ['BUILD_ENV'] == "development"):
         # refresh run script locally
         os.system(dyno_command)
-        print("process_catalog: {}", catalog["hgId"])
     else:
         # refresh catalog <create a new dyno here>
-        # heroku_conn = heroku3.from_key(os.environ['HEROKU_API_KEY'])
-        # heroku_app = heroku_conn.apps()[APP_NAME]
-        # heroku_app.run_process_detached(APP_NAME, dyno_command, size=1, attach=False, printout=True)
         create_dyno(dyno_command)
         
     
