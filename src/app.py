@@ -27,6 +27,7 @@ def create_dyno(dynoCommand):
     url = "https://api.heroku.com/apps/grs_product_refresh/dynos"
     data = {
         "body": {
+            
             "command": dynoCommand,
             "attach": False,
             "size": "Performance-M",
@@ -34,7 +35,12 @@ def create_dyno(dynoCommand):
             "force_no_tty": None
         }
     }
-    r = requests.post(url, json=data)
+    headers = {
+        'Accept': 'application/vnd.heroku+json; version=3',
+        'Content-type': 'application/json',
+        'token': os.environ['HEROKU_API_KEY']
+    }
+    r = requests.post(url, json=data, headers=headers)
     print(r.status_code)
 
 def start_refresh(catalog, token):
