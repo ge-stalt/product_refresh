@@ -1,7 +1,7 @@
 import os
 import sys
 from flask import Flask
-import dbutil
+from src.dbutil import get_catalogs
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
