@@ -38,7 +38,7 @@ def create_dyno(dynoCommand):
     headers = {
         'Accept': 'application/vnd.heroku+json; version=3',
         'Content-type': 'application/json',
-        'Authorization': 'token={token}'.format(token=os.environ['HEROKU_API_KEY']),
+        'Authorization': 'Bearer {token}'.format(token=os.environ['HEROKU_API_KEY']),
         "Range": 'id ..; max=1000'
     }
     response = requests.post(url, json=data, headers=headers)
