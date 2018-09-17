@@ -41,9 +41,8 @@ def create_dyno(dynoCommand):
         'token': os.environ['HEROKU_API_KEY']
     }
     response = requests.post(url, json=data, headers=headers)
-    print(r.status_code)
-    resp = response.json()
-    print(resp)
+    print(response.status_code)
+    print(response.json())
 
 def start_refresh(catalog, token):
     APP_NAME = os.environ['APP_NAME']
