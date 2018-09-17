@@ -47,7 +47,33 @@ def get_cost(value):
     else:
         cost = value
     return cost
+
+
+def enable_new_products(db, catalog, CURRENT_VERSION):
+    productCollection = db['Products']
     
+    #remove old product items
+    productCollection.remove({
+        "CURRENT_VERSION": { "$ne": CURRENT_VERSION},
+        "Updated": True,
+        "StoreFrontId": catalog["StoreFrontId"],
+        "CatalogLanguage": catalog["CatalogLanguage"],
+        "CatalogCountry": catalog["CatalogCountry"],
+        "CatalogName": catalog["CatalogName"],
+    })
+
+    #set new download to true
+    productCollection.update_many({
+        "CURRENT_VERSION": CURRENT_VERSION,
+        "Updated": False,
+        "StoreFrontId": catalog["StoreFrontId"],
+    }, {
+        "$set": {
+            "Updated": True,
+        }
+    })
+
+
 def isValidProduct(data):
     return (data["ProductName"] and
         data["ProductId"] and

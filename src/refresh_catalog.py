@@ -4,30 +4,35 @@ import argparse
 import codecs
 from contextlib import closing
 import csv
-from dbutil import update_catalog, add_product, get_db, get_catalog_by_id
+from dbutil import update_catalog, add_product, get_db, get_catalog_by_id, enable_new_products
 import datetime
 
 def refresh_catalog(catalogId, token):
     print("Refreshing CatalogId: {}".format(catalogId))
 
-    #update status
-    update_catalog(catalogId, "Inprogress")
-
-    #download file
-    get_products(catalogId, token)
-
-    #update status
-    update_catalog(catalogId, "Completed")
-
-def get_products(catalogId, token):
-    
     CURRENT_VERSION = int(datetime.datetime.now().timestamp() * 1000)
-
-    session = requests.Session()
 
     db = get_db()
 
     catalog = get_catalog_by_id(db, catalogId)
+
+    #update status
+    update_catalog(catalog, "Inprogress")
+
+    #download file
+    download_products(db, catalog, token, CURRENT_VERSION)
+
+    #enable new projdcts
+    enable_new_products(db, catalog, CURRENT_VERSION)
+    
+    #update status
+    update_catalog(catalogId, "Completed")
+
+
+
+def download_products(db, catalog, token, CURRENT_VERSION):
+    
+    session = requests.Session()
 
     with closing(session.get(catalog["CatalogCSVUrl"], stream=True, cookies={'grs': token})) as r:
         reader = csv.reader(codecs.iterdecode(r.iter_lines(), encoding='ISO-8859-1'))
