@@ -12,7 +12,7 @@ def get_db_url(env):
         poc: os.environ['MONGODB_URL_POC'],
         qa: os.environ['MONGODB_URL_QA']
     }
-    if (url[env]) {
+    if (url[env]): {
         return url[env]
     }
     sys.exit("Invalid environment")
