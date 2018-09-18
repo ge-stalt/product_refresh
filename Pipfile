@@ -10,7 +10,6 @@ flask = "*"
 requests = "*"
 gunicorn = "*"
 pymongo = {version = "*", extras = ["tls", "srv", "gssapi"]}
-"heroku3" = "*"
 
 [requires]
 python_version = "3.6"
