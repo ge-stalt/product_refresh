@@ -5,7 +5,6 @@ from src.dbutil import get_catalogs
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-print("started application with app name: ", __name__)
 
 @app.route('/')
 def homepage():
