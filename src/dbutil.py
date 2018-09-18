@@ -70,22 +70,33 @@ def enable_new_products(db, catalog, CURRENT_VERSION):
     db[EntityCache.GRSProducts.value].remove({
         "CURRENT_VERSION": { "$ne": CURRENT_VERSION},
         "Updated": True,
-        "ProductCatalogId": catalog["hgId"],
-        "StoreFrontId": catalog["StoreFrontId"]
+        "StoreFrontId": catalog["StoreFrontId"],
+        "CatalogName": catalog["CatalogName"],
+        "CatalogLanguage": catalog["CatalogLanguage"],
+        "CatalogCountry": catalog["CatalogCountry"]
     })
 
     #set new download to true
     db[EntityCache.GRSProducts.value].update_many({
         "CURRENT_VERSION": CURRENT_VERSION,
         "Updated": False,
-        "ProductCatalogId": catalog["hgId"],
         "StoreFrontId": catalog["StoreFrontId"],
+        "CatalogName": catalog["CatalogName"],
+        "CatalogLanguage": catalog["CatalogLanguage"],
+        "CatalogCountry": catalog["CatalogCountry"]
     }, {
         "$set": {
             "Updated": True
         }
     })
 
+def can_convert_to_int(value):
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False
+    
 
 def isValidProduct(data):
     return (data["ProductName"] and
@@ -97,7 +108,8 @@ def isValidProduct(data):
         data["ProductId"] > 0)
 
 def add_product(db, store, product, CURRENT_VERSION):
-    if (isinstance(product[0], int)):
+    
+    if (can_convert_to_int(product[0])):
         productMap = {
             "ProductCatalogId": store["hgId"],
             "CURRENT_VERSION": CURRENT_VERSION,

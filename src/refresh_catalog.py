@@ -17,7 +17,7 @@ def refresh_catalog(env, catalogId, token):
     #get catalog
     catalog = get_catalog_by_id(db, catalogId)
 
-    #update status
+    # update status
     update_catalog(db, catalog, "Inprogress")
 
     #download file
@@ -39,6 +39,7 @@ def download_products(db, catalog, token, CURRENT_VERSION):
         reader = csv.reader(codecs.iterdecode(r.iter_lines(), encoding='ISO-8859-1'))
         line_count = 0
         for row in reader:
+            # print(row)
             if line_count == 0:
                 line_count += 1
             elif row != [] and len(row) > 1 and line_count > 0:
