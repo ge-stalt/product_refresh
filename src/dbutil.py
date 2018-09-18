@@ -4,16 +4,9 @@ from pymongo import MongoClient
 import datetime
 
 def get_db_url(env):
-    url = {
-        local: os.environ['MONGODB_URL'],
-        prod: os.environ['MONGODB_URL_PROD'],
-        demo: os.environ['MONGODB_URL_DEMO'],
-        st: os.environ['MONGODB_URL_ST'],
-        poc: os.environ['MONGODB_URL_POC'],
-        qa: os.environ['MONGODB_URL_QA']
-    }
-    if (url[env]):
-        return url[env]
+    mongodb_url = "MONGODB_{env}".format(env=env.upper())
+    if (os.environ[mongodb_url]):
+        return os.environ[mongodb_url]
     else:
         sys.exit("Invalid environment")
 
@@ -69,20 +62,19 @@ def enable_new_products(db, catalog, CURRENT_VERSION):
     productCollection.remove({
         "CURRENT_VERSION": { "$ne": CURRENT_VERSION},
         "Updated": True,
-        "StoreFrontId": catalog["StoreFrontId"],
-        "CatalogLanguage": catalog["CatalogLanguage"],
-        "CatalogCountry": catalog["CatalogCountry"],
-        "CatalogName": catalog["CatalogName"],
+        "ProductCatalogId": catalog["hgId"],
+        "StoreFrontId": catalog["StoreFrontId"]
     })
 
     #set new download to true
     productCollection.update_many({
         "CURRENT_VERSION": CURRENT_VERSION,
         "Updated": False,
+        "ProductCatalogId": catalog["hgId"],
         "StoreFrontId": catalog["StoreFrontId"],
     }, {
         "$set": {
-            "Updated": True,
+            "Updated": True
         }
     })
 
@@ -99,6 +91,7 @@ def isValidProduct(data):
 def add_product(db, store, product, CURRENT_VERSION):
     productCollection = db['Products']
     productMap = {
+        "ProductCatalogId": store["hgId"],
         "CURRENT_VERSION": CURRENT_VERSION,
         "ModifiedDate": int(datetime.datetime.now().timestamp() * 1000),
         "Updated": False,
