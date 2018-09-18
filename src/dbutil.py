@@ -97,7 +97,7 @@ def isValidProduct(data):
         data["ProductId"] > 0)
 
 def add_product(db, store, product, CURRENT_VERSION):
-    if (isinstance(product[0]), int):
+    if (isinstance(product[0], int)):
         productMap = {
             "ProductCatalogId": store["hgId"],
             "CURRENT_VERSION": CURRENT_VERSION,
