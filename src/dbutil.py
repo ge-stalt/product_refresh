@@ -1,24 +1,38 @@
 import os
+import sys
 from pymongo import MongoClient
 import datetime
 
-def get_db():
+def get_db_url(env):
+    url = {
+        local: os.environ['MONGODB_URL'],
+        prod: os.environ['MONGODB_URL_PROD'],
+        demo: os.environ['MONGODB_URL_DEMO'],
+        st: os.environ['MONGODB_URL_ST'],
+        poc: os.environ['MONGODB_URL_POC'],
+        qa: os.environ['MONGODB_URL_QA']
+    }
+    if (url[env]) {
+        return url[env]
+    }
+    sys.exit("Invalid environment")
+
+def get_db(env):
     """
     Connects to mongo db
 
     Returns a mongodb connection
     """
-    mongo_url = os.environ['MONGODB_URL']
+    
+    mongo_url = get_db_url(env)
     client = MongoClient(mongo_url)
     return client['nulabs']
 
-def get_catalog_count():
-    db = get_db()
+def get_catalog_count(db):
     productCatalogsCollection = db['productCatalogs']
     return productCatalogsCollection.count({})
 
-def get_catalogs():
-    db = get_db()
+def get_catalogs(db):
     productCatalogsCollection = db['productCatalogs']
     return productCatalogsCollection.find({}).limit(1)
 
@@ -26,8 +40,7 @@ def get_catalog_by_id(db, catalogId):
     productCatalogsCollection = db['productCatalogs']
     return productCatalogsCollection.find_one({"hgId": catalogId})
 
-def update_catalog(catalog, status):
-    db = get_db()
+def update_catalog(db, catalog, status):
     productCatalogsCollection = db['productCatalogs']
     productCatalogsCollection.update({
         "hgId": catalog["hgId"]
