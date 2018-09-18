@@ -2,6 +2,11 @@ import os
 import sys
 from pymongo import MongoClient
 import datetime
+from enum import Enum
+
+class EntityCache(Enum):
+    GRSProductCatalog = "GRSProductCatalog"
+    GRSProducts = "GRSProducts"
 
 def get_db_url(env):
     mongodb_url = "MONGODB_{env}".format(env=env.upper())
@@ -9,6 +14,14 @@ def get_db_url(env):
         return os.environ[mongodb_url]
     else:
         sys.exit("Invalid environment")
+
+def get_db_name(env):
+    if (env == "local" or env == "prod"):
+        db_name = os.environ["DATABASE"]
+    else:
+        db_name = "{env}-{database}".format(env=env.upper(), database=os.environ["DATABASE"])
+    
+    return db_name
 
 def get_db(env):
     """
@@ -18,24 +31,21 @@ def get_db(env):
     """
     
     mongo_url = get_db_url(env)
+    db_name = get_db_name(env)
     client = MongoClient(mongo_url)
-    return client['nulabs']
+    return client[db_name]
 
 def get_catalog_count(db):
-    productCatalogsCollection = db['productCatalogs']
-    return productCatalogsCollection.count({})
+    return db[EntityCache.GRSProductCatalog.value].count({})
 
 def get_catalogs(db):
-    productCatalogsCollection = db['productCatalogs']
-    return productCatalogsCollection.find({}).limit(1)
+    return db[EntityCache.GRSProductCatalog.value].find({}).limit(1)
 
 def get_catalog_by_id(db, catalogId):
-    productCatalogsCollection = db['productCatalogs']
-    return productCatalogsCollection.find_one({"hgId": catalogId})
+    return db[EntityCache.GRSProductCatalog.value].find_one({"hgId": catalogId})
 
 def update_catalog(db, catalog, status):
-    productCatalogsCollection = db['productCatalogs']
-    productCatalogsCollection.update({
+    db[EntityCache.GRSProductCatalog.value].update({
         "hgId": catalog["hgId"]
     }, {
         "$set": {
@@ -56,10 +66,8 @@ def get_cost(value):
 
 
 def enable_new_products(db, catalog, CURRENT_VERSION):
-    productCollection = db['Products']
-    
     #remove old product items
-    productCollection.remove({
+    db[EntityCache.GRSProducts.value].remove({
         "CURRENT_VERSION": { "$ne": CURRENT_VERSION},
         "Updated": True,
         "ProductCatalogId": catalog["hgId"],
@@ -67,7 +75,7 @@ def enable_new_products(db, catalog, CURRENT_VERSION):
     })
 
     #set new download to true
-    productCollection.update_many({
+    db[EntityCache.GRSProducts.value].update_many({
         "CURRENT_VERSION": CURRENT_VERSION,
         "Updated": False,
         "ProductCatalogId": catalog["hgId"],
@@ -89,7 +97,6 @@ def isValidProduct(data):
         data["ProductId"] > 0)
 
 def add_product(db, store, product, CURRENT_VERSION):
-    productCollection = db['Products']
     productMap = {
         "ProductCatalogId": store["hgId"],
         "CURRENT_VERSION": CURRENT_VERSION,
@@ -113,6 +120,6 @@ def add_product(db, store, product, CURRENT_VERSION):
     }
     # print(productMap)
     if (isValidProduct(productMap)):
-        productCollection.insert_one(productMap)
+        db[EntityCache.GRSProducts.value].insert_one(productMap)
 
     
