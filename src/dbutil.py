@@ -131,7 +131,6 @@ def add_product(db, store, product, CURRENT_VERSION):
             "Popularity": int(product[6]),
             "ProductCost": int(get_cost(round(float(product[9]) + float(product[10]) + float(product[11]) + float(product[12]), 2)) * store["PointRatio"]),
         }
-        # print(productMap)
         if (isValidProduct(productMap)):
             db[EntityCache.GRSProducts.value].insert_one(productMap)
 
