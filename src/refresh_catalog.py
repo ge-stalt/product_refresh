@@ -36,7 +36,7 @@ def download_products(db, catalog, token, CURRENT_VERSION):
     session = requests.Session()
 
     with closing(session.get(catalog["CatalogCSVUrl"], stream=True, cookies={'grs': token})) as r:
-        reader = csv.reader(codecs.iterdecode(r.iter_lines(), encoding='ISO-8859-1'))
+        reader = csv.reader(codecs.iterdecode(r.iter_lines(), encoding='utf-8'))
         line_count = 0
         for row in reader:
             # print(row)
